@@ -5,7 +5,8 @@ db.sqlite3
 *.log
 *.env
 .env
-/staticfiles/      # collected static files
+/staticfiles/*
+!/staticfiles/.gitkeep
 /media/            # user uploads
 .idea/             # for PyCharm users
 .vscode/           # for VSCode users
