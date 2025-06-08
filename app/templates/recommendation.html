@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Qualifications - Diploma{% endblock %}
+
+{% block content %}
+<style>
+    .recommendation-block{
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
+        background-color: #f0f2f5;
+    }
+
+    .recommendation-block.active{
+        opacity: 1;
+        pointer-events: auto;
+        position: relative;
+    }
+
+    .program-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .program-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        background-color: #f0f2f5;
+        border-bottom: 1px solid #dcdcdc;
+        border-radius: 6px;
+        margin-bottom: 0.5rem;
+    }
+
+    .program-status.qualified {
+        background-color: #198754;
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        white-space: nowrap;       /* Prevent text wrapping */
+        line-height: 1;            /* Prevent vertical stretching */
+        display: inline-block;     /* Ensure consistent box model */
+        vertical-align: middle;    /* Aligns nicely next to text or inline elements */
+    }
+
+
+    .program-item.unqualified {
+        background-color: #ffd8d8;
+        color: #ffffff;
+    }
+
+    .program-status.not-qualified {
+        background-color: #dc3545;
+        color: white;
+        padding: 0.25rem 0.6rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        white-space: nowrap;       /* Prevents text wrapping */
+        line-height: 1;            /* Keeps line height tight */
+        display: inline-block;     /* Ensures padding and background apply properly */
+        vertical-align: middle;    /* Aligns it nicely inline */
+    }
+
+    
+    .program-item a{
+        text-decoration: none;
+        font-size: 0.85rem;
+        color: black;
+        font-weight: 500;
+    }
+
+    .percentage-badge {
+        background-color: #28a745; /* Bootstrap's bg-success color */
+        font-size: 0.8rem; /* Equivalent to fs-6 in Bootstrap (which is about 1rem) */
+        font-weight: bold;
+        padding: 0.375rem 0.75rem; /* Adjust the padding if needed */
+        border-radius: 0.375rem; /* Border radius for the "badge" look */
+        color: white; /* Text color inside the badge */
+    }
+</style>
+
+
+<div class="container p-2" id="recommendation-page">
+    <div class="py-4 text-center">
+        <h3 class="fw-bold">Here's what we recommend for you.</h3>
+        <div>Based on your qualifications and preferences, we are selecting the best programs for you.</div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="mt-3 fw-bold">Calculating your recommendations, please wait...</div>
+    </div>
+
+    <div id="recommendation-results" class="row gx-4 gy-4">
+    </div>
+
+    <div class="py-3 text-center" id="footer-links" style="display: none;">
+        <p class="text-muted">
+            Didn't find exactly what you're looking for? 
+            <a href="[Placeholder All Programs URL]">Explore all programs</a> or 
+            <a href="[Placeholder Refine Preferences URL]">refine your preferences</a>.
+        </p>
+    </div>
+</div>
+
+<script src="{% static 'js/recommendation.js' %}"></script>
+{% endblock %}

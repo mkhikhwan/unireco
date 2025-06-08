@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Preference{% endblock %}
+
+{% block content %}
+<div class="container p-2">
+    <div class="py-4">
+        <h3 class="fw-bold">
+            What are your preferences?
+        </h3>
+        <div>
+            Please score how much you prefer each of the following fields from 1 to 10, with 1 being "Not Preferred", 5
+            being "Neutral", and 9 being "Preferred".
+        </div>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+        <div class="row mb-4">
+            <label class="fw-bold text-primary">{{ field.label }}</label>
+            <div class="col-md-12 d-flex justify-content-between mt-2">
+                {% for radio in field %}
+                <div class="d-flex flex-column align-items-center">
+                    {{ radio.tag }}
+                    <label class="btn btn-light rounded-pill px-3 py-2" for="{{ radio.id_for_label }}">
+                        {{ radio.choice_label }}
+                    </label>
+                    {% if radio.choice_label == "1" %}
+                    <small style="font-size: 11px; text-align: center;">Not<br>Preferred</small>
+                    {% elif radio.choice_label == "5" %}
+                    <small style="font-size: 11px; text-align: center;">Neutral</small>
+                    {% elif radio.choice_label == "9" %}
+                    <small style="font-size: 11px; text-align: center;">Most<br>Preferred</small>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

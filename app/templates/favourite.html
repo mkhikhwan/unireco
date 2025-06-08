@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Favourites{% endblock %}
+
+{% block content %}
+<div class="container pt-2">
+    <div class="text-center mb-4 mt-4">
+        <h1 class="fw-bold">Your Favourite Programs</h1>
+        <p class="text-muted">Revisit and manage your saved program preferences easily.</p>
+    </div>
+
+    <div class="container">
+    <div class="row justify-content-center">
+        {% if programs %}
+            {% for program in programs %}
+            <div class="col-12 mb-3">
+                <div class="card shadow-sm p-3"
+                    style="border-radius: 15px; background-color: #f8f9fa;">
+                    <div class="row g-3 align-items-center">
+                        
+                        <!-- Left: Logo -->
+                        <div class="col-auto">
+                            <img src="{{ program.logo }}" 
+                                alt="{{ program.university.name }} logo"
+                                class="img-fluid rounded"
+                                style="width: 80px; height: 80px; object-fit: cover;">
+                        </div>
+
+                        <!-- Middle: Text content -->
+                        <div class="col clickable unselectable overflow-hidden" onclick="viewProgram('{{ program.id }}')">
+                            <h5 class="fw-bold text-primary m-0 text-truncate">{{ program.name }}</h5>
+                            <p class="text-dark fw-bold mb-1 text-truncate">{{ program.university }}</p>
+                            <p class="text-muted mb-0 text-clamp-2">{{ program.description }}</p>
+                        </div>
+
+                        <!-- Right: Delete button -->
+                        <div class="col-auto">
+                            <button onclick="deleteFavourite('{{ program.id }}', this)"
+                                class="btn btn-light rounded-circle border border-danger shadow-sm text-danger"
+                                style="width: 50px; height: 50px;">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <i class="bi bi-trash fs-4" style="padding-top: 2px;"></i>
+                                </div>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center mt-5">
+                <p class="text-muted fs-5">You haven’t added any favourite programs yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+</div>
+
+<script>
+// Delete function
+function deleteFavourite(programIdStr, button) {
+    const programId = parseInt(programIdStr);
+    const csrfToken = getCSRFToken();
+
+    fetch(`/api/favourite/delete/${programId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json',
+        }
+    }).then(response => {
+        if (response.ok) {
+            // Remove the card from DOM
+            const card = button.closest('.card');
+            alert('Favourite deleted successfully.');
+            card.remove();
+        } else {
+            response.json().then(data => {
+                alert(data.error || 'Failed to delete');
+            });
+        }
+    }).catch(err => {
+        console.error(err);
+        alert("An error occurred.");
+    });
+}
+
+function viewProgram(programIdStr){
+    const programId = parseInt(programIdStr);
+
+    window.location.href = `/program/${programId}`;
+}
+</script>
+{% endblock %}

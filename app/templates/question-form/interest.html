@@ -1,0 +1,400 @@
+{% extends "base.html" %}
+
+{% block title %}Preference{% endblock %}
+
+{% block content %}
+<style>
+    .question-step {
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
+        position: absolute;
+        width: 100%;
+    }
+    
+    .question-step.active {
+        opacity: 1;
+        pointer-events: auto;
+        position: relative;
+    }
+
+    .chip {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 5px;
+        background-color: #f0f0f0;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        border: 2px solid #7eb2ff;
+    }
+
+    .chip.selected {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .chip.selected:hover{
+        background-color: #2c92ff;
+        color: white;
+    }
+
+    .chip:hover {
+        background-color: #d1e7ff;
+        transform: scale(1.1);
+
+    }
+</style>
+
+<div class="container p-2">
+    <div class="py-4">
+        <h3 class="fw-bold">
+            What are your preferences?
+        </h3>
+        <div>
+            Answer the questions below to help us understand your preferences. 
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Question 1 - Realistic -->
+        <div class="question-step" data-question="q1">
+            <label class="form-label fw-semibold mb-1">
+                From 1 to 5, how do you relate to the statement below?
+            </label>
+            <div class="fst-italic text-muted my-4">
+                "I enjoy working with tools, machinery, or engaging in hands-on, practical tasks."
+            </div>
+            <input type="hidden" name="realistic" id="realistic">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="1">1</div>
+                <div class="chip" data-value="2">2</div>
+                <div class="chip" data-value="3">3</div>
+                <div class="chip" data-value="4">4</div>
+                <div class="chip" data-value="5">5</div>
+            </div>
+            <div class="button-container"></div>
+        </div>
+        
+        <div class="question-step" data-question="q2">
+            <label class="form-label fw-semibold mb-1">
+                From 1 to 5, how do you relate to the statement below?
+            </label>
+            <div class="fst-italic text-muted my-4">
+                "I enjoy solving complex problems, conducting research, or exploring abstract ideas."
+            </div>
+            <input type="hidden" name="investigative" id="investigative">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="1">1</div>
+                <div class="chip" data-value="2">2</div>
+                <div class="chip" data-value="3">3</div>
+                <div class="chip" data-value="4">4</div>
+                <div class="chip" data-value="5">5</div>
+            </div>
+            <div class="button-container"></div>
+        </div>
+        
+        <div class="question-step" data-question="q3">
+            <label class="form-label fw-semibold mb-1">
+                From 1 to 5, how do you relate to the statement below?
+            </label>
+            <div class="fst-italic text-muted my-4">
+                "I enjoy expressing myself through creative activities like art, music, writing, or design."
+            </div>
+            <input type="hidden" name="artistic" id="artistic">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="1">1</div>
+                <div class="chip" data-value="2">2</div>
+                <div class="chip" data-value="3">3</div>
+                <div class="chip" data-value="4">4</div>
+                <div class="chip" data-value="5">5</div>
+            </div>
+            <div class="button-container"></div>
+        </div>
+        
+        <div class="question-step" data-question="q4">
+            <label class="form-label fw-semibold mb-1">
+                From 1 to 5, how do you relate to the statement below?
+            </label>
+            <div class="fst-italic text-muted my-4">
+                "I enjoy helping others, teaching, or working in teams to achieve common goals."
+            </div>
+            <input type="hidden" name="social" id="social">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="1">1</div>
+                <div class="chip" data-value="2">2</div>
+                <div class="chip" data-value="3">3</div>
+                <div class="chip" data-value="4">4</div>
+                <div class="chip" data-value="5">5</div>
+            </div>
+            <div class="button-container"></div>
+        </div>
+        
+        <div class="question-step" data-question="q5">
+            <label class="form-label fw-semibold mb-1">
+                From 1 to 5, how do you relate to the statement below?
+            </label>
+            <div class="fst-italic text-muted my-4">
+                "I enjoy leading projects, persuading others, or making decisions that impact the outcome of tasks."
+            </div>
+            <input type="hidden" name="enterprising" id="enterprising">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="1">1</div>
+                <div class="chip" data-value="2">2</div>
+                <div class="chip" data-value="3">3</div>
+                <div class="chip" data-value="4">4</div>
+                <div class="chip" data-value="5">5</div>
+            </div>
+            <div class="button-container"></div>
+        </div>
+        
+        <div class="question-step" data-question="q6">
+            <label class="form-label fw-semibold mb-1">
+                From 1 to 5, how do you relate to the statement below?
+            </label>
+            <div class="fst-italic text-muted my-4">
+                "I enjoy working with data, following structured procedures, or organizing information in a systematic way."
+            </div>
+            <input type="hidden" name="conventional" id="conventional">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="1">1</div>
+                <div class="chip" data-value="2">2</div>
+                <div class="chip" data-value="3">3</div>
+                <div class="chip" data-value="4">4</div>
+                <div class="chip" data-value="5">5</div>
+            </div>
+            <div class="button-container"></div>
+        </div>        
+
+        <div class="question-step" data-question="q7">
+            <label class="form-label fw-semibold mb-3">
+                Do you enjoy designing, building, or maintaining software systems?
+            </label>
+            <input type="hidden" name="software_development" id="software_development">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="no">No</div>
+                <div class="chip" data-value="yes">Yes</div>
+            </div>
+            <div class="button-container"></div>
+        </div>
+
+        <div class="question-step" data-question="q8">
+            <label class="form-label fw-semibold mb-3">
+                Are you interested in how computers communicate and how to protect them from threats?
+            </label>
+            <input type="hidden" name="network_security" id="network_security">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="no">No</div>
+                <div class="chip" data-value="yes">Yes</div>
+            </div>
+            <div class="button-container"></div>
+        </div>
+
+        <div class="question-step" data-question="q9">
+            <label class="form-label fw-semibold mb-3">
+                Are you excited by the idea of creating games, immersive environments, or interactive media?
+            </label>
+            <input type="hidden" name="game_design" id="game_design">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="no">No</div>
+                <div class="chip" data-value="yes">Yes</div>
+            </div>
+            <div class="button-container"></div>
+        </div>
+
+        <div class="question-step" data-question="q10">
+            <label class="form-label fw-semibold mb-3">
+                Are you curious about how machines can learn, think, or analyze data?
+            </label>
+            <input type="hidden" name="ai_interest" id="ai_interest">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="no">No</div>
+                <div class="chip" data-value="yes">Yes</div>
+            </div>
+            <div class="button-container"></div>
+        </div>
+
+        <div class="question-step" data-question="q11">
+            <label class="form-label fw-semibold mb-3">
+                Do you want to apply technology in a business setting or work on digital products?
+            </label>
+            <input type="hidden" name="tech_business" id="tech_business">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="no">No</div>
+                <div class="chip" data-value="yes">Yes</div>
+            </div>
+            <div class="button-container"></div>
+        </div>
+
+        <div class="question-step" data-question="q12">
+            <label class="form-label fw-semibold mb-3">
+                Do you enjoy abstract thinking, logic, or solving theoretical problems?
+            </label>
+            <input type="hidden" name="theoretical_computing" id="theoretical_computing">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="no">No</div>
+                <div class="chip" data-value="yes">Yes</div>
+            </div>
+            <div class="button-container"></div>
+        </div>
+
+        <div class="question-step" data-question="q13">
+            <label class="form-label fw-semibold mb-3">
+                Would you enjoy optimizing how software is developed — like planning, testing, or improving team workflows?
+            </label>
+            <input type="hidden" name="software_engineering_process" id="software_engineering_process">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="no">No</div>
+                <div class="chip" data-value="yes">Yes</div>
+            </div>
+            <div class="button-container"></div>
+        </div>
+
+        <div class="question-step" data-question="q14">
+            <label class="form-label fw-semibold mb-3">
+                Would you like working with cybersecurity systems, ethical hacking, or connected smart devices?
+            </label>
+            <input type="hidden" name="cyber_iot" id="cyber_iot">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="no">No</div>
+                <div class="chip" data-value="yes">Yes</div>
+            </div>
+            <div class="button-container"></div>
+        </div>
+
+        <div class="question-step" data-question="q15">
+            <label class="form-label fw-semibold mb-3">
+                Would you enjoy designing user interfaces, animations, or visual experiences like AR/VR?
+            </label>
+            <input type="hidden" name="ui_ux_design" id="ui_ux_design">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="no">No</div>
+                <div class="chip" data-value="yes">Yes</div>
+            </div>
+            <div class="button-container"></div>
+        </div>
+
+        <!-- Question 10 -->
+        <div class="question-step" data-question="q16">
+            <label class="form-label fw-semibold mb-3">
+                Would you enjoy training AI models or working with large datasets?
+            </label>
+            <input type="hidden" name="ai_big_data" id="ai_big_data">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="no">No</div>
+                <div class="chip" data-value="yes">Yes</div>
+            </div>
+            <div class="button-container"></div>
+        </div>
+
+        <div class="question-step" data-question="q17">
+            <label class="form-label fw-semibold mb-3">
+                Would you like to build e-commerce systems, manage business data, or innovate in financial tech?
+            </label>
+            <input type="hidden" name="fintech_ecommerce" id="fintech_ecommerce">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="no">No</div>
+                <div class="chip" data-value="yes">Yes</div>
+            </div>
+            <div class="button-container"></div>
+        </div>
+
+        <div class="question-step" data-question="q18">
+            <label class="form-label fw-semibold mb-3">
+                Would you like to work on simulations, scientific computing, or mathematical modeling?
+            </label>
+            <input type="hidden" name="scientific_computing" id="scientific_computing">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="no">No</div>
+                <div class="chip" data-value="yes">Yes</div>
+            </div>
+            <div class="button-container"></div>
+        </div>
+    </form>    
+</div>
+
+<script>
+    let prevQuestion = 0;
+    let currentQuestion = 1;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        showQuestion(currentQuestion);
+
+        questionStepDivs = document.querySelectorAll('.question-step');
+        questionStepDivs.forEach((step) => {
+            initButtons(step);
+            initChips(step);
+        });
+    });
+
+    function showQuestion(question) {
+        const prevQuestion = currentQuestion;
+        currentQuestion = question;
+
+        const prevQuestionDiv = document.querySelector(`[data-question="q${prevQuestion}"]`);
+        const questionDiv = document.querySelector(`[data-question="q${currentQuestion}"]`);
+
+        // Hide previous question
+        if (prevQuestionDiv) {
+            prevQuestionDiv.classList.remove('active');
+        }
+
+        // Show new question after slight delay (for transition effects, if any)
+        if (questionDiv) {
+            setTimeout(() => {
+                questionDiv.classList.add('active');
+            }, 200); // Delay once
+        }
+    }
+
+
+    function initButtons(step){
+        const questionNumber = parseInt(step.dataset.question.replace('q', ''), 10);
+
+        const backButton = `<button type="button" class="btn btn-primary back-question-btn me-2" onClick="showQuestion(${questionNumber - 1})">Back</button>`;
+        const nextButton = `<button type="button" class="btn btn-primary next-question-btn d-none" onClick="showQuestion(${questionNumber + 1})">Next</button>`;
+        const submitButton = `<button type="submit" class="btn btn-success submit-question-btn d-none" onClick="submit()">Submit</button>`;
+        const buttonContainer = step.querySelector('.button-container');
+
+        if(questionNumber === 1) {
+            buttonContainer.innerHTML += nextButton;
+        }
+        else if(questionNumber === 18) {
+            buttonContainer.innerHTML += backButton;
+            buttonContainer.innerHTML += submitButton;
+        }
+        else{
+            buttonContainer.innerHTML += backButton;
+            buttonContainer.innerHTML += nextButton;
+        }
+    }
+
+    function initChips(step){
+        const hiddenInput = step.querySelector("input[type='hidden']");
+        const chips = step.querySelectorAll(".chip");
+
+        chips.forEach(chip => {
+            chip.addEventListener("click", () => {
+                chips.forEach(c => c.classList.remove("selected"));
+                chip.classList.add("selected");
+                hiddenInput.value = chip.dataset.value;
+
+                // Show next button by removing d-none
+                const nextBtn = step.querySelector(".next-question-btn.d-none");
+                if (nextBtn) {
+                    nextBtn.classList.remove("d-none");
+                }
+
+                const submitBtn = step.querySelector(".submit-question-btn.d-none");
+                if (submitBtn) {
+                    submitBtn.classList.remove("d-none");
+                }
+            });
+        });
+    }
+</script>
+
+{% endblock %}

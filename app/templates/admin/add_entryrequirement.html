@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Preference{% endblock %}
+
+{% block content %}
+<div class="container p-2">
+    <div class="py-4">
+        <h3 class="fw-bold">
+            What are your qualifications?
+        </h3>
+        <div>
+            Please input your Sijil Pelajaran Malaysia (SPM) results.
+        </div>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+
+        <form action="post">
+            <div id="form-container">
+            </div>
+            <button type="button" class="btn btn-outline-primary d-flex justify-content-between align-items-center"
+                onclick="addField()">
+                <i class="bi bi-plus-circle p-0 mb-1 mr-1"></i>
+                <span class="ms-1">Add Course</span>
+            </button>
+
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </form>
+</div>
+
+{{ choices|json_script:"choices" }}
+
+<script src="{% static 'js/spm_form.js' %}"></script>
+
+{% endblock %}

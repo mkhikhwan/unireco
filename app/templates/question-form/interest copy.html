@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Preference{% endblock %}
+
+{% block content %}
+<style>
+    .question-step {
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
+        position: absolute;
+        width: 100%;
+    }
+    
+    .question-step.active {
+        opacity: 1;
+        pointer-events: auto;
+        position: relative;
+    }
+
+    .chip {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: #f0f0f0;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    }
+
+    .chip.selected {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .chip:hover {
+        background-color: #d1e7ff;
+    }
+</style>
+
+<div class="container p-2">
+    <div class="py-4">
+        <h3 class="fw-bold">
+            What are your preferences?
+        </h3>
+        <div>
+            Answer the questions below to help us understand your preferences. 
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+    
+        <!-- Question 1 -->
+        <div class="question-step" data-step="0">
+            <label class="form-label fw-semibold mb-3">
+                Do you enjoy designing, building, or maintaining software systems?
+            </label>
+            <input type="hidden" name="theoretical_practical" id="theoretical_practical">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="1_theoretical">No</div>
+                <div class="chip" data-value="1_balanced_theory_practical">Yes</div>
+            </div>
+        </div>
+    
+        <!-- Question 7 NOT USED -->
+        <div class="question-step" data-step="6">
+            <label class="form-label fw-semibold mb-3">
+                7. Pick 5 topics here that interest you:
+            </label>
+            <input type="hidden" name="topics_interested" id="topics_interested">
+            <div class="d-flex flex-wrap gap-3 mb-3">
+                <div class="chip" data-value="7_mathematical_modeling">🧮 Mathematical Modeling</div>
+                <div class="chip" data-value="7_scientific_computing">🧪 Scientific Computing</div>
+                <div class="chip" data-value="7_machine_learning">🧠 Machine Learning</div>
+                <div class="chip" data-value="7_big_data_analytics">📊 Big Data & Analytics</div>
+                <div class="chip" data-value="7_game_mobile_dev">🎮 Game & Mobile App Dev</div>
+                <div class="chip" data-value="7_uiux_graphics">🎨 UI/UX & Computer Graphics</div>
+                <div class="chip" data-value="7_software_design_testing">🧰 Software Design & Testing</div>
+                <div class="chip" data-value="7_project_quality_mgmt">📈 Project & Quality Management</div>
+                <div class="chip" data-value="7_cybersecurity_networks">🌐 Cybersecurity & Networks</div>
+                <div class="chip" data-value="7_iot_embedded_systems">📡 IoT & Embedded Systems</div>
+            </div>
+            <div class="text-danger mb-2 fst-italic d-none">You can only select up to 5 topics.</div>
+
+            <button type="button" class="btn btn-primary back-btn">Back</button>
+            <button type="submit" class="btn btn-success">Submit</button>
+        </div>
+    </form>    
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        showStep(0); // Show the first step on page load
+    });
+
+    const steps = document.querySelectorAll('.question-step');
+    let currentStep = 0;
+
+    function showStep(step) {
+        steps.forEach((s, index) => {
+            if (index === step) {
+                s.className = 'question-step'; // Add 'active' class to the current step
+                setTimeout(()=>{
+                    s.classList.add('active'); // Remove 'active' class from other steps
+                }, 100)
+            } else {
+                s.className = 'question-step d-none'; // Add 'active' class to the current step
+            }
+        });
+    }
+
+
+    steps.forEach((stepEl) => {
+        const stepIndex = parseInt(stepEl.dataset.step); // ← This gets the real index of the step from the HTML
+
+        const input = stepEl.querySelector('input[type="hidden"]');
+        const buttons = stepEl.querySelectorAll('.chip');
+
+        if (stepIndex === 6) {
+            buttons.forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    btn.classList.toggle('selected'); // Allow multiple selections
+                    const selectedValues = Array.from(buttons)
+                        .filter(b => b.classList.contains('selected'))
+                        .map(b => b.dataset.value);
+                    input.value = selectedValues.join(',');
+
+                    // Optional: enforce a max of 5 selections
+                    if (selectedValues.length > 5) {
+                        btn.classList.remove('selected');
+                        input.value = selectedValues.slice(0, 5).join(',');
+                    }
+
+                    // Show error message if more than 5 are selected
+                    const errorMessage = stepEl.querySelector('.text-danger');
+                    if (selectedValues.length > 5) {
+                        errorMessage.classList.remove('d-none');
+                    } else {
+                        errorMessage.classList.add('d-none');
+                    }
+                });
+            });
+        }else {
+            buttons.forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    buttons.forEach((b) => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    input.value = btn.dataset.value;
+
+                    // Move to the next step
+                    if (currentStep < steps.length - 1) {
+                        currentStep++;
+                        setTimeout(() => {
+                            showStep(currentStep);
+                        }, 500); // Delay to allow for the transition effect
+                    }
+                });
+            });
+        }
+    });
+
+
+    const backButtons = document.querySelectorAll('.back-btn');
+    backButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            if(currentStep > 0) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        })
+    });
+</script>
+{% endblock %}

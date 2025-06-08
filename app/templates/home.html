@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}UniReco{% endblock %}
+
+{% load static %}
+
+{% block content %}
+<style>
+    .hero-section {
+        background-size: cover;
+        background-position: center;
+        height: 55vh;
+        width: 80%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .hero-curve {
+        position: relative;
+        margin: 0 auto;
+        padding: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        background: linear-gradient(to right, #0d6efd, #6f42c1);
+    }
+
+    .fake-shadow {
+        width: 100%;
+        height: 40px;
+        background: black;
+        position: relative;
+        top: 85px;
+        right: 5px;
+        z-index: 1;
+        border-radius: 50%;
+        opacity: 0.6;
+        filter: blur(20px);
+        transition: opacity 0.1s ease; /* Transition effect on opacity */
+    }
+
+    #hero-image {
+        transition: transform 0.4s ease; /* Transition effect on transform property */
+    }
+
+    .gradient-bg {
+        background: linear-gradient(to right, #0d6efd, #6f42c1);
+    }
+
+</style>
+
+<div class="bg-white text-white stretch-to-bottom d-flex justify-content-center p-0 m-0">
+    <div class="row p-0 m-0 gradient-bg w-100 d-flex justify-content-center h-50">
+        <div class="d-flex row align-items-center hero-section m-0 p-0">
+            <!-- Left Content -->
+            <div class="col-md-8 text-start p-0 m-0">
+                <div class="container ps-5">
+                    <h1 class="display-3 fw-bold">UniReco</h1>
+                    <h3 class="fs-2 fw-light mt-3">
+                        Planning to continue your studies? We'll help you choose your ideal programme.
+                    </h3>
+                    <p class="mt-4">
+                        <a href="{% url 'get_started' %}" class="btn btn-light btn-lg">Get Started</a>
+                    </p>
+                </div>
+            </div>
+    
+            <!-- Right Content -->
+            <div class="col-md-4">
+                <img src="{% static 'img/hero-degree-scroll.png' %}"
+                    alt="Hero Image"
+                    id="hero-image"
+                    class="img-fluid position-relative bottom-0 start-0 translate-start-y"
+                    style="transform: translateY(20%); max-width: 100%; height: auto; z-index: 99;">
+
+                <!-- Fake Shadow -->
+                <div class="fake-shadow"></div>
+            </div>
+        </div>
+        <div class="hero-curve">
+            <svg width="1920" height="200" xmlns="http://www.w3.org/2000/svg">
+                <!-- Define the gradient inside <defs> -->
+                <defs>
+                    <linearGradient id="blue-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#0d6efd;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#6f42c1;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+        
+                <!-- Top-left path with applied gradient -->
+                <path d="M0,0 H960 A480,100 0 0 1 0,100 Z" fill="url(#blue-gradient)" />
+                
+                <!-- Bottom-right white path with curved top -->
+                <path d="M960,200 H1920 A480,100 0 0 0 960,100 Z" fill="white" />
+            </svg>
+        </div>
+        
+        
+    </div>
+</div>
+
+<script>
+    const image = document.getElementById('hero-image');
+    const fakeShadow = document.querySelector('.fake-shadow');
+    
+    let translateY = 25; 
+    let direction = -1; // Start moving up
+    let opacity = 0.6;
+    const speed = 0.1;
+    let animationFrameId;
+
+    function animateImageHover() {
+        // Adjust position
+        translateY += speed * direction;
+
+        // Bounce between 20 and 30
+        if (translateY <= 20) {
+            opacity -= 0.1;
+            direction = 1; // Move up
+        } else if (translateY >= 30) {
+            opacity += 0.1;
+            direction = -1; // Move down
+        }
+
+        // Apply transform
+        image.style.transform = `translateY(${translateY}%)`;
+
+        fakeShadow.style.opacity = opacity
+
+        animationFrameId = requestAnimationFrame(animateImageHover);
+    }
+
+    image.addEventListener('mouseover', () => {
+        // stop animation and enlarge image
+        cancelAnimationFrame(animationFrameId);
+        image.style.transform = `translateY(25%) scale(1.1) rotate(5deg)`;
+        fakeShadow.style.opacity = 0.8;
+    });
+
+    image.addEventListener('mouseout', () => {
+        // start animation again
+        image.style.transform = `scale(1.00)`;
+        image.style.transform = `translateY(30%) scale(1.00) rotate(0deg)`;
+        fakeShadow.style.opacity = opacity;
+        animateImageHover();
+    });
+
+    animateImageHover();
+</script>
+{% endblock %}

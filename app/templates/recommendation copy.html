@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Qualifications - Diploma{% endblock %}
+
+{% block content %}
+<style>
+    .recommendation-block{
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
+    }
+
+    .recommendation-block.active{
+        opacity: 1;
+        pointer-events: auto;
+        position: relative;
+    }
+</style>
+
+
+<div class="container p-2" id="recommendation-page">
+    <div class="py-4 text-center">
+        <h3 class="fw-bold">Here's what we recommend for you.</h3>
+        <div>Based on your qualifications and preferences, we are selecting the best programs for you.</div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="mt-3 fw-bold">Calculating your recommendations, please wait...</div>
+    </div>
+
+    <!-- Results will be inserted here -->
+    <div id="program-results" class="row"></div>
+
+    <div class="py-3 text-center" id="footer-links" style="display:none;">
+        <p class="text-muted">
+            Didn't find exactly what you're looking for? 
+            <a href="[Placeholder All Programs URL]">Explore all programs</a> or 
+            <a href="[Placeholder Refine Preferences URL]">refine your preferences</a>.
+        </p>
+    </div>
+
+</div>
+
+<script src="{% static 'js/recommendation.js' %}"></script>
+{% endblock %}

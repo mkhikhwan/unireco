@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Search Programs{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="py-3">
+        <h1 class="text-center fw-bold">Search Program</h1>
+    </div>
+
+    <div class="mb-4 mt-2">
+        <div class="row">
+            <div class="col-12-12">
+                <input type="text" class="form-control" id="searchInput" placeholder="Search for a program...">
+            </div>
+            <!-- <div class="col-md-2 text-end">
+                <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#filterModal">
+                    <i class="bi bi-funnel"></i> Filter
+                </button>
+            </div> -->
+        </div>
+    </div>
+
+    <div class="row">
+        {% for program in programs %}
+            <a href="{% url 'view_program' program.id %}" style="text-decoration: none; color: inherit;">
+                <div class="col-md-12 p-2 program-card">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="row g-3 align-items-center">
+                                <!-- Logo Column -->
+                                <div class="col-auto">
+                                    <img src="{{ program.logo }}" 
+                                        alt="{{ program.university.name }} logo"
+                                        class="img-fluid rounded"
+                                        style="width: 80px; height: 80px; object-fit: cover;">
+                                </div>
+        
+                                <!-- Content Column -->
+                                <div class="col">
+                                    <p class="program-name text-primary fw-bold m-0 text-clamp-2">{{ program.name }}</p>
+                                    <p class="program-uni text-dark fw-bold mb-2">{{ program.university }}</p>
+                                    <p class="program-desc text-muted text-clamp-2">{{ program.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        {% empty %}
+            <div class="col-md-12">
+                <p>No programs available.</p>
+            </div>
+        {% endfor %}    
+    </div>
+</div>
+
+<!-- Simple Search Script -->
+<script>
+    document.getElementById("searchInput").addEventListener("keyup", function () {
+        let filter = this.value.toLowerCase();
+        let cards = document.querySelectorAll(".program-card");
+
+        cards.forEach(card => {
+            let programName = card.querySelector(".program-name").textContent.toLowerCase();
+            let universityName = card.querySelector(".program-uni").textContent.toLowerCase();
+
+            if (programName.includes(filter) || universityName.includes(filter)) {
+                card.style.display = "";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    });
+</script>
+
+{% endblock %}

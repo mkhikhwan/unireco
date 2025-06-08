@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Preference{% endblock %}
+
+{% block content %}
+<style>
+    .question-step {
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
+        position: absolute;
+        width: 100%;
+    }
+    
+    .question-step.active {
+        opacity: 1;
+        pointer-events: auto;
+        position: relative;
+    }
+
+    .chip {
+        display: inline-block;
+        padding: 10px 30px;
+        margin: 5px;
+        background-color: #f0f0f0;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        border: 2px solid #7eb2ff;
+    }
+
+    .chip.selected {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .chip.selected:hover{
+        background-color: #2c92ff;
+        color: white;
+    }
+
+    .chip:hover {
+        background-color: #d1e7ff;
+        transform: scale(1.1);
+
+    }
+</style>
+
+<div class="container p-2">
+    <div class="py-4">
+        <h3 class="fw-bold">
+            What are your preferences?
+        </h3>
+        <div>
+            Answer the questions below to help us understand your preferences. 
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <!-- Question 1 -->
+        <div class="question-step" data-question="q1">
+            <label class="form-label fw-semibold mb-3">
+                Do you enjoy designing, building, or maintaining software systems?
+            </label>
+            <input type="hidden" name="software_development" id="software_development">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <div class="chip" data-value="1">1</div>
+                <div class="chip" data-value="2">2</div>
+                <div class="chip" data-value="3">3</div>
+                <div class="chip" data-value="4">4</div>
+                <div class="chip" data-value="5">5</div>
+            </div>
+            <div class="button-container"></div>
+        </div>
+
+    </form>    
+</div>
+
+<script>
+    let prevQuestion = 0;
+    let currentQuestion = 1;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        showQuestion(currentQuestion);
+
+        questionStepDivs = document.querySelectorAll('.question-step');
+        questionStepDivs.forEach((step) => {
+            initButtons(step);
+            initChips(step);
+        });
+    });
+
+    function showQuestion(question) {
+        const prevQuestion = currentQuestion;
+        currentQuestion = question;
+
+        const prevQuestionDiv = document.querySelector(`[data-question="q${prevQuestion}"]`);
+        const questionDiv = document.querySelector(`[data-question="q${currentQuestion}"]`);
+
+        // Hide previous question
+        if (prevQuestionDiv) {
+            prevQuestionDiv.classList.remove('active');
+        }
+
+        // Show new question after slight delay (for transition effects, if any)
+        if (questionDiv) {
+            setTimeout(() => {
+                questionDiv.classList.add('active');
+            }, 200); // Delay once
+        }
+    }
+
+
+    function initButtons(step){
+        const questionNumber = parseInt(step.dataset.question.replace('q', ''), 10);
+
+        const backButton = `<button type="button" class="btn btn-primary back-question-btn me-2" onClick="showQuestion(${questionNumber - 1})">Back</button>`;
+        const nextButton = `<button type="button" class="btn btn-primary next-question-btn d-none" onClick="showQuestion(${questionNumber + 1})">Next</button>`;
+        const submitButton = `<button type="submit" class="btn btn-success submit-question-btn d-none" onClick="submit()">Submit</button>`;
+        const buttonContainer = step.querySelector('.button-container');
+
+        if(questionNumber === 1) {
+            buttonContainer.innerHTML += nextButton;
+        }
+        else if(questionNumber === 12) {
+            buttonContainer.innerHTML += backButton;
+            buttonContainer.innerHTML += submitButton;
+        }
+        else{
+            buttonContainer.innerHTML += backButton;
+            buttonContainer.innerHTML += nextButton;
+        }
+    }
+
+    function initChips(step){
+        const hiddenInput = step.querySelector("input[type='hidden']");
+        const chips = step.querySelectorAll(".chip");
+
+        chips.forEach(chip => {
+            chip.addEventListener("click", () => {
+                chips.forEach(c => c.classList.remove("selected"));
+                chip.classList.add("selected");
+                hiddenInput.value = chip.dataset.value;
+
+                // Show next button by removing d-none
+                const nextBtn = step.querySelector(".next-question-btn.d-none");
+                if (nextBtn) {
+                    nextBtn.classList.remove("d-none");
+                }
+
+                const submitBtn = step.querySelector(".submit-question-btn.d-none");
+                if (submitBtn) {
+                    submitBtn.classList.remove("d-none");
+                }
+            });
+        });
+    }
+</script>
+
+{% endblock %}

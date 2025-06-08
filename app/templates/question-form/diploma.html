@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Qualifications - Diploma{% endblock %}
+
+{% block content %}
+<div class="container p-2">
+    <div class="py-4">
+        <h3 class="fw-bold">
+            What are your diploma qualifications?
+        </h3>
+        <div>
+            Please input your diploma results.
+        </div>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <div id="form-container" class="mb-3">
+            <label for="diploma-institute" class="form-label">Diploma Institute:</label>
+            <select id="diploma-institute" name="diploma_institute" class="form-select">
+                {% for institute in institutions %}
+                <option value="{{ institute }}">{{ institute }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="diploma-name" class="form-label mt-3">Diploma Name:</label>
+            <select id="diploma-name" name="diploma_name" class="form-select">
+                {% for diploma in diploma_names %}
+                <option value="{{ diploma }}">{{ diploma }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="nec" class="form-label mt-3">NEC:</label>
+            <select id="nec" name="nec" class="form-select">
+                {% for key, value in nec_categories.items %}
+                <option value="{{ key }}">{{ value }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="cgpa" class="form-label mt-3">CGPA:</label>
+            <input type="number" id="cgpa" name="cgpa" class="form-control" step="0.01" min="0" max="4" value="0.00">
+        </div>
+
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

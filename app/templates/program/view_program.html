@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}{{ program_detail.program_name }} - UniReco{% endblock %}
+
+{% load static %}
+
+{% block content %}
+<style>
+    #diploma p {
+        user-select: none;
+        cursor: pointer;
+    }
+
+    #matriculation p {
+        user-select: none;
+        cursor: pointer;
+    }
+
+    #stpm p {
+        user-select: none;
+        cursor: pointer;
+    }
+</style>
+
+<div class="container pt-4 pb-2">
+    <div class="row">
+        <div class="col-md-8">
+            <h2 class="mb-3 fw-bold">{{ program_detail.program_name }}</h2>
+            <img src="{% if program_detail.program_image %}{% static 'img/program/' %}{{ program_detail.program_image|escape }}{% else %}https://placehold.co/600x400{% endif %}" 
+                class="img-fluid mb-3" 
+                alt="Program Image">
+            <div>
+                <p style="text-align: justify; text-justify: inter-word;"><strong>Description: <br></strong>{{ program_detail.description }}</p> 
+            </div>
+                
+
+            <p><strong>Duration: </strong>{{ program_detail.duration }}</p>
+            <p><strong>Mode: </strong>{{ program_detail.mode }}</p>
+
+            <p>
+                <strong>Entry Requirements:</strong> <span class="text-muted fst-italic">(Tap to Expand)</span>
+            </p>
+            <div class="entry-requirement ps-3">
+                {{ program_detail.entry_requirement | safe }}
+            </div>
+              
+
+            <p><strong>Career Opportunities (Not limited to): </strong><br>
+                {{ program_detail.career_opportunities | safe }}
+            </p>
+        </div>
+
+        <div class="col-md-4">
+            <div>
+                <h4>Institute Details</h4>
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>Institute: </strong>{{ program_detail.university.name }}</li>
+                    <li class="list-group-item"><strong>Location: </strong>{{ program_detail.university.location }}</li>
+                </ul>
+                <a href="{{ program_detail.university.university_page_url }}" target="_blank"
+                    class="btn btn-primary w-100 my-2 p-2 d-flex align-items-center justify-content-center">
+                    <i class="bi bi-box-arrow-up-right" style="margin: 0px 10px 3px 0px"></i>
+                    Go To University Page
+                </a>
+                <button type="button"
+                    class="btn btn-info w-100 my-2 p-2 d-flex align-items-center justify-content-center"
+                    onclick="addToFavourites('{{ program_detail.id }}')">
+                    <i class="bi bi-bookmark-fill" style="margin: 0px 10px 3px 0px"></i>
+                    Add to Favourites
+                </button>
+            </div>
+
+            <!-- Related Programs Section -->
+            <div class="mt-4 px-3">
+                <h5 class="mb-3">Related Programs</h5>
+                
+                {% for programme in related_programmes %}
+                <a href="{{ programme.link }}" class="d-flex align-items-start gap-3 p-3 mb-3 bg-light rounded shadow-sm border text-decoration-none text-dark">
+                    <!-- Left: Image -->
+                    <div style="min-width: 80px;">
+                        <img src="{{ programme.image }}" 
+                            alt="{{ programme.name }} logo"
+                            class="img-fluid rounded"
+                            style="width: 80px; height: 80px; object-fit: cover;">
+                    </div>
+
+                    <!-- Right: Text Content -->
+                    <div class="flex-grow-1 overflow-hidden">
+                        <strong>{{ programme.name }}</strong><br>
+                        <small>{{ programme.university }}</small><br>
+                        <small class="text-muted d-block text-truncate text-clamp-2">
+                            {{ programme.description }}
+                        </small>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const diploma_req = document.getElementById('diploma');
+        const matriculation_req = document.getElementById('matriculation');
+        const stpm_req = document.getElementById('stpm');
+
+        addShowHide(diploma_req);
+        addShowHide(matriculation_req);
+        addShowHide(stpm_req);
+    });
+
+    function addShowHide(div) {
+        const ul = div.querySelector('ul');
+        const header = div.querySelector('p strong');  // Target the <strong> element
+
+        // Add the initial indicator before the text
+        header.textContent = '› ' + header.textContent; // Add indicator symbol to the header
+
+        ul.classList.add("d-none");
+
+        header.addEventListener('click', function() {
+            const isHidden = ul.classList.contains("d-none");
+            ul.classList.toggle("d-none");
+
+            // Toggle the indicator between "›" (collapsed) and "▼" (expanded)
+            header.textContent = isHidden ? '▼ ' + header.textContent.slice(2) : '› ' + header.textContent.slice(2);
+        });
+    }
+
+    function addToFavourites(programIdStr) {
+        const programId = parseInt(programIdStr);
+
+        fetch(`/api/favourite/add/${programId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert(data.message);  // You can replace this with a toast or better UI feedback
+            } else if (data.error) {
+                alert("Error: " + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error adding to favourites:', error);
+            alert("Something went wrong.");
+        });
+    }
+</script>
+
+{% endblock %}
