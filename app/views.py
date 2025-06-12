@@ -10,6 +10,7 @@ from app.services.recommender import Recommender
 # from app.services.llm_service import OllamaLLM
 from django.http import JsonResponse
 import time
+from django.contrib.auth.decorators import login_required
 
 from .models import (
     CustomUser,
@@ -21,7 +22,8 @@ from .models import (
     Programme,
     FavouriteProgramme,
     DegreeField,
-    TagDegreeField
+    TagDegreeField,
+    Question
 )
 
 
@@ -127,31 +129,55 @@ def view_program(request, programme_id):
     )
 
 # Interest Quiz
+@login_required(login_url='/login')
 def interest_form(request):
+    riasec_tags = {
+        'realistic_1', 'realistic_2',
+        'investigative_1', 'investigative_2',
+        'artistic_1', 'artistic_2',
+        'social_1', 'social_2',
+        'enterprising_1', 'enterprising_2',
+        'conventional_1', 'conventional_2',
+    }
+
     if request.method == "POST":
         user = request.user
-        if not user.is_authenticated:
-            return redirect("/login")
-
         submitted_data = request.POST
+        print("submitted_data", submitted_data)
 
+        # Clear previous preferences for this user
         UserPreference.objects.filter(user=user).delete()
 
-        for tag, value in submitted_data.items():
-            if tag in ['csrfmiddlewaretoken']:
+        for tag, value_list in submitted_data.lists():
+            if tag == 'csrfmiddlewaretoken':
                 continue
 
             try:
                 tag_obj = Tag.objects.get(name=tag)
-                score = 1 if value.lower() == 'yes' else 0
+                value = value_list[0].strip().lower()
+
+                if tag in riasec_tags:
+                    try:
+                        score = int(value)  # Parse as integer (e.g., 1–5 scale)
+                    except ValueError:
+                        print(f"Invalid integer value for RIASEC tag {tag}: {value}")
+                        continue
+                else:
+                    score = 1 if value == 'yes' else 0
+
+                # Store preference
                 UserPreference.objects.create(user=user, tag=tag_obj, preference_score=score)
+
             except Tag.DoesNotExist:
                 print(f"Tag not found: {tag}")
 
         print("✅ Preferences successfully inserted for user:", user.email)
         return redirect('/recommendation')
 
-    return render(request, "question-form/interest.html")
+    # GET method – show the form
+    questions = Question.objects.order_by('question_number').all()
+    context = {'questions': questions}
+    return render(request, "question-form/interest.html", context)
 
 # SPM Form
 def spm_form(request):
@@ -600,4 +626,3 @@ def admin_add_entry_requirement(request):
 #     explanation = llm.explain_recommendation(questionnaire_and_answers, program_details)
 
 #     return explanation
-

@@ -60,259 +60,33 @@
     <form method="post">
         {% csrf_token %}
 
-        <!-- Question 1 - Realistic -->
-        <div class="question-step" data-question="q1">
+        {% for question in questions %}
+        <div class="question-step" data-question="q{{ question.question_number }}">
             <label class="form-label fw-semibold mb-1">
-                From 1 to 5, how do you relate to the statement below?
+                {{ question.question_text_1 }}
             </label>
+            {% if question.question_text_2 %}
             <div class="fst-italic text-muted my-4">
-                "I enjoy working with tools, machinery, or engaging in hands-on, practical tasks."
+                {{ question.question_text_2 }}
             </div>
-            <input type="hidden" name="realistic" id="realistic">
+            {% endif %}
+            <input type="hidden" name="{{ question.tag.name }}" id="{{ question.tag.name }}">
             <div class="d-flex flex-wrap gap-2 mb-3">
-                <div class="chip" data-value="1">1</div>
-                <div class="chip" data-value="2">2</div>
-                <div class="chip" data-value="3">3</div>
-                <div class="chip" data-value="4">4</div>
-                <div class="chip" data-value="5">5</div>
+                {% if question.question_type == 'SCALE_1_5' %}
+                    <div class="chip" data-value="1">1</div>
+                    <div class="chip" data-value="2">2</div>
+                    <div class="chip" data-value="3">3</div>
+                    <div class="chip" data-value="4">4</div>
+                    <div class="chip" data-value="5">5</div>
+                {% elif question.question_type == 'YES_NO' %}
+                    <div class="chip" data-value="no">No</div>
+                    <div class="chip" data-value="yes">Yes</div>
+                {% endif %}
+                {# Add more question types here if needed #}
             </div>
             <div class="button-container"></div>
         </div>
-        
-        <div class="question-step" data-question="q2">
-            <label class="form-label fw-semibold mb-1">
-                From 1 to 5, how do you relate to the statement below?
-            </label>
-            <div class="fst-italic text-muted my-4">
-                "I enjoy solving complex problems, conducting research, or exploring abstract ideas."
-            </div>
-            <input type="hidden" name="investigative" id="investigative">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <div class="chip" data-value="1">1</div>
-                <div class="chip" data-value="2">2</div>
-                <div class="chip" data-value="3">3</div>
-                <div class="chip" data-value="4">4</div>
-                <div class="chip" data-value="5">5</div>
-            </div>
-            <div class="button-container"></div>
-        </div>
-        
-        <div class="question-step" data-question="q3">
-            <label class="form-label fw-semibold mb-1">
-                From 1 to 5, how do you relate to the statement below?
-            </label>
-            <div class="fst-italic text-muted my-4">
-                "I enjoy expressing myself through creative activities like art, music, writing, or design."
-            </div>
-            <input type="hidden" name="artistic" id="artistic">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <div class="chip" data-value="1">1</div>
-                <div class="chip" data-value="2">2</div>
-                <div class="chip" data-value="3">3</div>
-                <div class="chip" data-value="4">4</div>
-                <div class="chip" data-value="5">5</div>
-            </div>
-            <div class="button-container"></div>
-        </div>
-        
-        <div class="question-step" data-question="q4">
-            <label class="form-label fw-semibold mb-1">
-                From 1 to 5, how do you relate to the statement below?
-            </label>
-            <div class="fst-italic text-muted my-4">
-                "I enjoy helping others, teaching, or working in teams to achieve common goals."
-            </div>
-            <input type="hidden" name="social" id="social">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <div class="chip" data-value="1">1</div>
-                <div class="chip" data-value="2">2</div>
-                <div class="chip" data-value="3">3</div>
-                <div class="chip" data-value="4">4</div>
-                <div class="chip" data-value="5">5</div>
-            </div>
-            <div class="button-container"></div>
-        </div>
-        
-        <div class="question-step" data-question="q5">
-            <label class="form-label fw-semibold mb-1">
-                From 1 to 5, how do you relate to the statement below?
-            </label>
-            <div class="fst-italic text-muted my-4">
-                "I enjoy leading projects, persuading others, or making decisions that impact the outcome of tasks."
-            </div>
-            <input type="hidden" name="enterprising" id="enterprising">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <div class="chip" data-value="1">1</div>
-                <div class="chip" data-value="2">2</div>
-                <div class="chip" data-value="3">3</div>
-                <div class="chip" data-value="4">4</div>
-                <div class="chip" data-value="5">5</div>
-            </div>
-            <div class="button-container"></div>
-        </div>
-        
-        <div class="question-step" data-question="q6">
-            <label class="form-label fw-semibold mb-1">
-                From 1 to 5, how do you relate to the statement below?
-            </label>
-            <div class="fst-italic text-muted my-4">
-                "I enjoy working with data, following structured procedures, or organizing information in a systematic way."
-            </div>
-            <input type="hidden" name="conventional" id="conventional">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <div class="chip" data-value="1">1</div>
-                <div class="chip" data-value="2">2</div>
-                <div class="chip" data-value="3">3</div>
-                <div class="chip" data-value="4">4</div>
-                <div class="chip" data-value="5">5</div>
-            </div>
-            <div class="button-container"></div>
-        </div>        
-
-        <div class="question-step" data-question="q7">
-            <label class="form-label fw-semibold mb-3">
-                Do you enjoy designing, building, or maintaining software systems?
-            </label>
-            <input type="hidden" name="software_development" id="software_development">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <div class="chip" data-value="no">No</div>
-                <div class="chip" data-value="yes">Yes</div>
-            </div>
-            <div class="button-container"></div>
-        </div>
-
-        <div class="question-step" data-question="q8">
-            <label class="form-label fw-semibold mb-3">
-                Are you interested in how computers communicate and how to protect them from threats?
-            </label>
-            <input type="hidden" name="network_security" id="network_security">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <div class="chip" data-value="no">No</div>
-                <div class="chip" data-value="yes">Yes</div>
-            </div>
-            <div class="button-container"></div>
-        </div>
-
-        <div class="question-step" data-question="q9">
-            <label class="form-label fw-semibold mb-3">
-                Are you excited by the idea of creating games, immersive environments, or interactive media?
-            </label>
-            <input type="hidden" name="game_design" id="game_design">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <div class="chip" data-value="no">No</div>
-                <div class="chip" data-value="yes">Yes</div>
-            </div>
-            <div class="button-container"></div>
-        </div>
-
-        <div class="question-step" data-question="q10">
-            <label class="form-label fw-semibold mb-3">
-                Are you curious about how machines can learn, think, or analyze data?
-            </label>
-            <input type="hidden" name="ai_interest" id="ai_interest">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <div class="chip" data-value="no">No</div>
-                <div class="chip" data-value="yes">Yes</div>
-            </div>
-            <div class="button-container"></div>
-        </div>
-
-        <div class="question-step" data-question="q11">
-            <label class="form-label fw-semibold mb-3">
-                Do you want to apply technology in a business setting or work on digital products?
-            </label>
-            <input type="hidden" name="tech_business" id="tech_business">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <div class="chip" data-value="no">No</div>
-                <div class="chip" data-value="yes">Yes</div>
-            </div>
-            <div class="button-container"></div>
-        </div>
-
-        <div class="question-step" data-question="q12">
-            <label class="form-label fw-semibold mb-3">
-                Do you enjoy abstract thinking, logic, or solving theoretical problems?
-            </label>
-            <input type="hidden" name="theoretical_computing" id="theoretical_computing">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <div class="chip" data-value="no">No</div>
-                <div class="chip" data-value="yes">Yes</div>
-            </div>
-            <div class="button-container"></div>
-        </div>
-
-        <div class="question-step" data-question="q13">
-            <label class="form-label fw-semibold mb-3">
-                Would you enjoy optimizing how software is developed — like planning, testing, or improving team workflows?
-            </label>
-            <input type="hidden" name="software_engineering_process" id="software_engineering_process">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <div class="chip" data-value="no">No</div>
-                <div class="chip" data-value="yes">Yes</div>
-            </div>
-            <div class="button-container"></div>
-        </div>
-
-        <div class="question-step" data-question="q14">
-            <label class="form-label fw-semibold mb-3">
-                Would you like working with cybersecurity systems, ethical hacking, or connected smart devices?
-            </label>
-            <input type="hidden" name="cyber_iot" id="cyber_iot">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <div class="chip" data-value="no">No</div>
-                <div class="chip" data-value="yes">Yes</div>
-            </div>
-            <div class="button-container"></div>
-        </div>
-
-        <div class="question-step" data-question="q15">
-            <label class="form-label fw-semibold mb-3">
-                Would you enjoy designing user interfaces, animations, or visual experiences like AR/VR?
-            </label>
-            <input type="hidden" name="ui_ux_design" id="ui_ux_design">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <div class="chip" data-value="no">No</div>
-                <div class="chip" data-value="yes">Yes</div>
-            </div>
-            <div class="button-container"></div>
-        </div>
-
-        <!-- Question 10 -->
-        <div class="question-step" data-question="q16">
-            <label class="form-label fw-semibold mb-3">
-                Would you enjoy training AI models or working with large datasets?
-            </label>
-            <input type="hidden" name="ai_big_data" id="ai_big_data">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <div class="chip" data-value="no">No</div>
-                <div class="chip" data-value="yes">Yes</div>
-            </div>
-            <div class="button-container"></div>
-        </div>
-
-        <div class="question-step" data-question="q17">
-            <label class="form-label fw-semibold mb-3">
-                Would you like to build e-commerce systems, manage business data, or innovate in financial tech?
-            </label>
-            <input type="hidden" name="fintech_ecommerce" id="fintech_ecommerce">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <div class="chip" data-value="no">No</div>
-                <div class="chip" data-value="yes">Yes</div>
-            </div>
-            <div class="button-container"></div>
-        </div>
-
-        <div class="question-step" data-question="q18">
-            <label class="form-label fw-semibold mb-3">
-                Would you like to work on simulations, scientific computing, or mathematical modeling?
-            </label>
-            <input type="hidden" name="scientific_computing" id="scientific_computing">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <div class="chip" data-value="no">No</div>
-                <div class="chip" data-value="yes">Yes</div>
-            </div>
-            <div class="button-container"></div>
-        </div>
+        {% endfor %}
     </form>    
 </div>
 
@@ -362,7 +136,7 @@
         if(questionNumber === 1) {
             buttonContainer.innerHTML += nextButton;
         }
-        else if(questionNumber === 18) {
+        else if(questionNumber === 24) {
             buttonContainer.innerHTML += backButton;
             buttonContainer.innerHTML += submitButton;
         }

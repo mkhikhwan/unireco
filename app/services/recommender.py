@@ -119,13 +119,26 @@ class Recommender:
         max_possible = 0  # To normalize score later
 
         for tag_id, tag_weight in tag_weights.items():
-            user_score = user_preferences.get(tag_id)
-
             if tag_id in {1, 2, 3, 4, 5, 6}:
                 # Get RIASEC values
-                temp = (user_score - tag_weight) ** 2
+                tag_name = Tag.objects.get(id=tag_id).name #realistic
+
+                tag_1_name = tag_name + "_1" # realistic_1
+                tag_1_id = Tag.objects.get(name=tag_1_name).id
+                tag_1_score = user_preferences.get(tag_1_id)
+
+                tag_2_name = tag_name + "_2" # realistic_2
+                tag_2_id = Tag.objects.get(name=tag_2_name).id
+                tag_2_score = user_preferences.get(tag_2_id)
+
+                combined_score = (tag_1_score + tag_2_score) / 2
+                print("combined score:", combined_score)
+
+                temp = (combined_score - tag_weight) ** 2
                 riasec_values.append(temp)
             else:
+                user_score = user_preferences.get(tag_id)
+
                 # For non-RIASEC tags, use existing method (user preference * weight)
                 score += tag_weight * user_score
                 max_possible += tag_weight

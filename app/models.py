@@ -17,7 +17,6 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
 
-
 class DegreeField(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, default="")
@@ -30,6 +29,24 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+
+class Question(models.Model):
+    class QuestionType(models.TextChoices):
+        SCALE_1_5 = 'SCALE_1_5', _('Scale 1 to 5')
+        YES_NO = 'YES_NO', _('Yes/No Question')
+
+    question_text_1 = models.TextField(help_text=_("Main question text or label."))
+    question_text_2 = models.TextField(blank=True, null=True, help_text=_("Secondary statement, if any (e.g., for scale questions)."))
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, help_text=_("The Tag this question relates to."))
+    question_type = models.CharField(
+        max_length=20,
+        choices=QuestionType.choices,
+        help_text=_("Type of question, determines rendering and answer format.")
+    )
+    question_number = models.PositiveIntegerField(unique=True, help_text=_("Order/number of the question."))
+
+    def __str__(self):
+        return f"Q{self.question_number}: {self.question_text_1[:50]}... ({self.tag.name})"
 
 class UserData(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
