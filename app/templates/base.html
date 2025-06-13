@@ -34,11 +34,14 @@
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/search">Search Programs</a>
+                        <a class="nav-link" href="{% url 'search_programs' %}">Search Programs</a>
                     </li>
                     {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/favourite">Favourites</a>
+                        <a class="nav-link" href="{% url 'recommendation_view' %}">Recommendation</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'favourite' %}">Favourites</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'logout' %}">Logout</a>
