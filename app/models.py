@@ -59,8 +59,7 @@ class UserData(models.Model):
 
     def __str__(self):
         return f"UserData for {self.user.email}"
-
-
+    
 class UserPreference(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
@@ -68,7 +67,6 @@ class UserPreference(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - {self.tag.name} ({self.preference_score})"
-
 
 class University(models.Model):
     name = models.CharField(max_length=255)
@@ -79,7 +77,6 @@ class University(models.Model):
     def __str__(self):
         return self.name
 
-
 class EntryRequirement(models.Model):
     stpm = models.JSONField(default=dict, blank=True, null=True)
     matriculation = models.JSONField(default=dict, blank=True, null=True)
@@ -88,7 +85,6 @@ class EntryRequirement(models.Model):
 
     def __str__(self):
         return f"Entry Requirement {self.id}"
-
 
 class Programme(models.Model):
     name = models.CharField(max_length=255)
