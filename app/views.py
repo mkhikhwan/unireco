@@ -370,8 +370,6 @@ def favourite(request):
         for fav in favourite_programs
     ]
 
-    user_pref = UserPreference.objects.filter(user=user)
-
     riasec = calculate_riasec_value(user)
     riasec_desc = {
         "realistic": "You enjoy hands-on activities and working with tools, machines, or the outdoors.",
@@ -384,7 +382,9 @@ def favourite(request):
     top_2 = sorted(riasec.items(), key=lambda item: item[1], reverse=True)[:2]
     top_2_descriptions = {trait: riasec_desc[trait] for trait, _ in top_2}
 
-    return render(request, "favourite.html", {"programs": program_favourites, "riasec": riasec, "riasec_desc": top_2_descriptions})
+    interest_list = get_user_interest(user)
+
+    return render(request, "favourite.html", {"programs": program_favourites, "riasec": riasec, "riasec_desc": top_2_descriptions, "interest_list": interest_list})
 
 def get_started(request):
     # Check if logged in
@@ -652,6 +652,23 @@ def calculate_riasec_value(user):
 
 
     return riasec_scores
+
+def get_user_interest(user):
+    user_pref = UserPreference.objects.filter(user=user)
+
+    interest_tag_ids = range(58, 70)
+    preferences = UserPreference.objects.filter(
+        user=user,
+        tag_id__in=interest_tag_ids
+    ).values_list('tag_id', 'preference_score')
+
+    interest_list = [x for x in preferences if x[1] > 0]
+    tag_ids = [tag_id for tag_id, score in interest_list]
+    interest_string_list = Tag.objects.filter(id__in=tag_ids).values_list('desc', flat=True)
+    
+    return interest_string_list
+
+
 
 
 # def handle_prompt(arrOfAnswers, program_id):
