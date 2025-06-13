@@ -370,7 +370,21 @@ def favourite(request):
         for fav in favourite_programs
     ]
 
-    return render(request, "favourite.html", {"programs": program_favourites})
+    user_pref = UserPreference.objects.filter(user=user)
+
+    riasec = calculate_riasec_value(user)
+    riasec_desc = {
+        "realistic": "You enjoy hands-on activities and working with tools, machines, or the outdoors.",
+        "investigative": "You are curious, analytical, and enjoy solving complex problems or exploring abstract ideas.",
+        "artistic": "You value creativity, self-expression, and open-ended problem solving.",
+        "social": "You enjoy helping others, teaching, or working in team environments that support collaboration.",
+        "enterprising": "You enjoy leading, persuading, and managing for organizational goals or economic success.",
+        "conventional": "You prefer structured tasks and managing data or details, often excelling in organized environments."
+    }
+    top_2 = sorted(riasec.items(), key=lambda item: item[1], reverse=True)[:2]
+    top_2_descriptions = {trait: riasec_desc[trait] for trait, _ in top_2}
+
+    return render(request, "favourite.html", {"programs": program_favourites, "riasec": riasec, "riasec_desc": top_2_descriptions})
 
 def get_started(request):
     # Check if logged in
@@ -614,6 +628,32 @@ def admin_add_entry_requirement(request):
     # return render(request, "entry/add_entry_requirement.html", {"choices": choices})
 
 # # Functions that are used inside views
+def calculate_riasec_value(user):
+    user_pref = UserPreference.objects.filter(user=user)
+    
+    riasec_ids = {
+        'realistic': [70, 71],
+        'investigative': [72, 73],
+        'artistic': [74, 75],
+        'social': [76, 77],
+        'enterprising': [78, 79],
+        'conventional': [80, 81],
+    }
+
+    riasec_scores = {}
+
+    for trait, ids in riasec_ids.items():
+        values = []
+        for id in ids:
+            pref = user_pref.filter(tag_id=id).first()
+            if pref:
+                values.append(pref.preference_score)  # Assuming your model has a `value` field
+        riasec_scores[trait] = sum(values) / len(values) if values else 0
+
+
+    return riasec_scores
+
+
 # def handle_prompt(arrOfAnswers, program_id):
 #     # This function will handle the prompt generation for the LLM
 #     # It will take the questionnaire and answers and generate a prompt for the LLM
