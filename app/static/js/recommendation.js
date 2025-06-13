@@ -38,9 +38,9 @@ function fetchRecommendations() {
                                 <h5 class="card-title mb-0 fw-bold">${index + 1} - ${field.name}</h5>
                                 <span class="percentage-badge">${field.match_percentage}% Match</span>
                             </div>
-                            <p class="card-text flex-grow-1">${field.description}</p>
+                            <p class="card-text">${field.description}</p>
                             <p class="fw-semibold">Interested? Here are programs in this field:</p>
-                            <ul class="program-list">
+                            <ul class="program-list flex-grow-1">
                                 ${field.programs.map(program => {
                                     const isQualified = program.qualified;
                                     const universityAbbr = getUniversityAbbreviation(program.institute);
