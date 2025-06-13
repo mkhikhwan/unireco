@@ -5,6 +5,7 @@ from app.models import (
 from app.utils import convert_letter_to_value
 import math
 from typing import List, Tuple
+import numpy as np
 
 class Recommender:
     def __init__(self, user):
@@ -108,7 +109,7 @@ class Recommender:
         tag_links = TagDegreeField.objects.filter(degree_field=degree_field).select_related("tag")
         return {tag_link.tag_id: tag_link.relevancy_score for tag_link in tag_links}
     
-    def calculate_compatibility_score(self, degree_field)-> float:
+    def calculate_compatibility_score_old(self, degree_field)-> float:
         tag_weights = self.get_tags_for_subfield(degree_field)  # {tag_id: relevancy_score}
         user_preferences = self.get_user_preferences()          # {tag_id: preference_score}
 
@@ -156,6 +157,64 @@ class Recommender:
             return final_score
 
         return 0
+    
+    def calculate_compatibility_score(self, degree_field) -> float:
+        tag_weights = self.get_tags_for_subfield(degree_field)  # {tag_id: relevancy_score}
+        user_preferences = self.get_user_preferences()          # {tag_id: preference_score}
+
+        score = 0
+        max_possible = 0
+
+        riasec_user_vector = []
+        riasec_program_vector = []
+
+        for tag_id, tag_weight in tag_weights.items():
+            if tag_id in {1, 2, 3, 4, 5, 6}: 
+                tag_name = Tag.objects.get(id=tag_id).name 
+
+                try:
+                    tag_1_id = Tag.objects.get(name=tag_name + "_1").id
+                    tag_2_id = Tag.objects.get(name=tag_name + "_2").id
+
+                    tag_1_score = user_preferences.get(tag_1_id)
+                    tag_2_score = user_preferences.get(tag_2_id)
+
+                    if tag_1_score is not None and tag_2_score is not None:
+                        avg_user_score = (tag_1_score + tag_2_score) / 2
+                        riasec_user_vector.append(avg_user_score)
+                        riasec_program_vector.append(tag_weight)
+                    else:
+                        # Fallback if any RIASEC question is missing
+                        riasec_user_vector.append(0)
+                        riasec_program_vector.append(tag_weight)
+                except Tag.DoesNotExist:
+                    riasec_user_vector.append(0)
+                    riasec_program_vector.append(tag_weight)
+            else:
+                user_score = user_preferences.get(tag_id)
+                if user_score is not None:
+                    score += tag_weight * user_score
+                    max_possible += tag_weight
+
+        # Calculate cosine similarity for RIASEC part
+        riasec_score = 0
+        if any(riasec_user_vector) and any(riasec_program_vector):
+            user_vec = np.array(riasec_user_vector)
+            program_vec = np.array(riasec_program_vector)
+            dot_product = np.dot(user_vec, program_vec)
+            norm_user = np.linalg.norm(user_vec)
+            norm_program = np.linalg.norm(program_vec)
+            if norm_user != 0 and norm_program != 0:
+                riasec_score = dot_product / (norm_user * norm_program)
+
+        # Combine both parts
+        if max_possible > 0:
+            non_riasec_score = score / max_possible
+            combined_score = (non_riasec_score * 0.3) + (riasec_score * 0.7)
+            return combined_score
+        else:
+            # No non-RIASEC preferences available, fallback to RIASEC-only score
+            return riasec_score
         
     def get_all_subfield_scores(self) -> List[Tuple[Programme, float]]:
         """
