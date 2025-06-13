@@ -352,9 +352,12 @@ def stpm_form(request):
 
     return render(request, "question-form/stpm.html", {"choices": choices})
 
-
 def favourite(request):
     user = request.user
+    notDoneQuiz = False
+
+    if not UserPreference.objects.filter(user=user).exists():
+        notDoneQuiz = True
 
     favourite_programs = FavouriteProgramme.objects.filter(user=user).select_related('programme', 'programme__university')
 
@@ -384,7 +387,13 @@ def favourite(request):
 
     interest_list = get_user_interest(user)
 
-    return render(request, "favourite.html", {"programs": program_favourites, "riasec": riasec, "riasec_desc": top_2_descriptions, "interest_list": interest_list})
+    return render(request, "favourite.html", 
+                  {"programs": program_favourites, 
+                   "riasec": riasec, 
+                   "riasec_desc": top_2_descriptions, 
+                   "interest_list": interest_list,
+                   "isNotDoneQuiz": notDoneQuiz}
+                   )
 
 def get_started(request):
     # Check if logged in
@@ -393,9 +402,15 @@ def get_started(request):
     
     return redirect("/qualification")
 
-# Recommendation API
+@login_required(login_url='/login')
 def recommendation(request):
     user = request.user
+    if not UserData.objects.filter(user=user).exists():
+        return redirect("/get-started")
+
+    if not UserPreference.objects.filter(user=user).exists():
+        return redirect("/get-started")
+
     recommender = Recommender(user)
     scores = recommender.get_all_subfield_scores()
 
