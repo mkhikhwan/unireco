@@ -180,6 +180,7 @@ def interest_form(request):
     return render(request, "question-form/interest.html", context)
 
 # SPM Form
+@login_required(login_url='/login')
 def spm_form(request):
     choices = {
         "subjects": get_subject_options('spm'),
@@ -187,7 +188,6 @@ def spm_form(request):
     }
 
     if request.method == "POST":
-        # TODO: Handle the form submission and save the data to the database
         subjects = request.POST.getlist('subjects[]')
         grades = request.POST.getlist('grades[]')
 
@@ -206,11 +206,10 @@ def spm_form(request):
         print("SPM Data Saved:", spm_result_data)
 
         return redirect("/interest")
-        
-
     return render(request, "question-form/spm.html", {"choices": choices})
 
 # Select Qualification Page
+@login_required(login_url='/login')
 def qualification_selection(request):
     if request.method == 'POST':
         user = request.user
@@ -240,6 +239,7 @@ def qualification_selection(request):
     return render(request, 'question-form/qualification_selection.html')
 
 # Diploma Form Page
+@login_required(login_url='/login')
 def diploma_form(request):
     institutions = [
         "Politeknik Kuching",
@@ -278,12 +278,10 @@ def diploma_form(request):
         print("Diploma Data Saved:", diploma_data)
         
         return redirect("/qualification/spm")
-
-        # return HttpResponse(format_post_data(request.POST))
-
     return render(request, "question-form/diploma.html", context)
 
 # Matriculation Form Page
+@login_required(login_url='/login')
 def matriculation_form(request):
     choices = {
         "subjects": get_subject_options('matriculation'),
@@ -291,7 +289,6 @@ def matriculation_form(request):
     }
 
     if request.method == "POST":
-        # TODO: Handle the form submission and save the data to the database
         subjects = request.POST.getlist('subjects[]')
         grades = request.POST.getlist('grades[]')
 
@@ -319,6 +316,7 @@ def matriculation_form(request):
     return render(request, "question-form/matriculation.html", {"choices": choices})
 
 # STPM Form Page
+@login_required(login_url='/login')
 def stpm_form(request):
     choices = {
         "subjects": get_subject_options('stpm'),
@@ -352,6 +350,7 @@ def stpm_form(request):
 
     return render(request, "question-form/stpm.html", {"choices": choices})
 
+# Favouritee View
 def favourite(request):
     user = request.user
     notDoneQuiz = False
@@ -395,13 +394,12 @@ def favourite(request):
                    "isNotDoneQuiz": notDoneQuiz}
                    )
 
+# Get Started View
+@login_required(login_url='/login')
 def get_started(request):
-    # Check if logged in
-    if not request.user.is_authenticated:
-        return redirect("/login")
-    
     return redirect("/qualification")
 
+# Recommendation View
 @login_required(login_url='/login')
 def recommendation(request):
     user = request.user
@@ -417,6 +415,9 @@ def recommendation(request):
     # return HttpResponse("Recommendation API is not available. Please use the /api/recommendation endpoint.")
     return render(request, "recommendation.html")
 
+
+# API Views
+# API Check Eligibility
 def api_check_eligibility(request,program_id):
     user = request.user
     if not user.is_authenticated:
@@ -428,7 +429,6 @@ def api_check_eligibility(request,program_id):
 
     return JsonResponse({"is_qualified": is_qualified}, safe=False)
 
-# API Views
 # API Get Recommendations
 def api_recommendation(request):
     user = request.user
@@ -462,6 +462,9 @@ def api_recommendation(request):
 # API Add to Favourites
 def api_add_to_favourites(request, program_id):
     user = request.user
+
+    if not user.is_authenticated:
+        return JsonResponse({"error": "Please login first before adding programme to favourites"}, status=401)
 
     try:
         programme = Programme.objects.get(id=program_id)
@@ -642,7 +645,9 @@ def admin_add_entry_requirement(request):
 
     # return render(request, "entry/add_entry_requirement.html", {"choices": choices})
 
-# # Functions that are used inside views
+
+
+#--------------- Helpers --------------------------
 def calculate_riasec_value(user):
     user_pref = UserPreference.objects.filter(user=user)
     
