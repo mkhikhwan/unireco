@@ -1,6 +1,6 @@
 # UniReco – University Program Recommendation System
 
-UniReco is a web-based recommendation system developed as part of a final-year Software Engineering project. It aims to help students identify suitable computer science programs offered by Malaysian public universities, based on their interests, personality traits, and academic qualifications.
+UniReco is a web-based recommendation system developed as part of a final-year Bachelor's Degree in Software Engineering project. It aims to help students identify suitable computer science programs offered by Malaysian public universities, based on their interests, personality traits, and academic qualifications.
 
 ## Features
 - Personalized recommendations based on user input via a structured questionnaire
