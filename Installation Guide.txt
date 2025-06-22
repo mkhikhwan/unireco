@@ -1,0 +1,82 @@
++---------------------------------------------------------------+
+|                                                               |
+|       UNIRECO - Recommendation System For Choosing            |
+|       Suitable Degree Programmes Based on Student Interest    |
+|                                                               |
++---------------------------------------------------------------+
+
+Django - Localhost Setup and Execution Guide
+====================================================
+
+This document outlines two methods for setting up and running the Django-based project on a local machine.
+
+==================================
+Method 1: Automated Setup (setup.bat)
+==================================
+
+1. Ensure that Python version 3.8 or higher is installed on the system.
+2. Locate and run the file named `setup.bat` by double-clicking it.
+
+Description:
+------------
+The `setup.bat` script performs the following steps automatically:
+- Creates a Python virtual environment
+- Activates the virtual environment
+- Installs all required Python packages listed in `requirements.txt`
+- Applies Django database migrations
+- Launches the Django development server
+
+Upon successful execution, the web application will be accessible at:
+http://127.0.0.1:8000/
+
+If the browser does not open automatically, this address can be entered manually into any modern web browser.
+
+====================================================
+Method 2: Manual Setup (Equivalent to setup.bat Tasks)
+====================================================
+
+For users who prefer or require manual configuration, the following steps replicate the tasks performed by `setup.bat`:
+
+1. Open Command Prompt (Windows) or Terminal (macOS/Linux).
+
+2. Navigate to the root directory of the project. Example:
+       cd path\to\project_folder
+
+3. Create a Python virtual environment by executing:
+       python -m venv venv
+
+4. Activate the virtual environment:
+   - On Windows:
+         venv\Scripts\activate
+   - On macOS/Linux:
+         source venv/bin/activate
+
+5. Install project dependencies using:
+       pip install -r requirements.txt
+
+6. Apply Django database migrations:
+       python manage.py migrate
+
+7. Start the Django development server:
+       python manage.py runserver
+
+8. Open a web browser and visit:
+       http://127.0.0.1:8000/
+
+Note:
+-----
+Both methods outlined above perform the same operations. The choice between them depends on user preference or system constraints.
+
+===================
+Troubleshooting Tips
+===================
+- Ensure Python and pip are installed and added to the system's PATH variable.
+- If `python` is not recognized, try using `python3`.
+- If `pip` is not recognized, try:
+      python -m pip install --upgrade pip
+
+=================
+Document Prepared By:
+=================
+MOHAMMAD KHAIRUL IKHWAN BIN ABDUL BASIT  
+Student ID: 78178
