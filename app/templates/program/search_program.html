@@ -10,68 +10,159 @@
 
     <div class="mb-4 mt-2">
         <div class="row">
-            <div class="col-12-12">
+            <div class="col-10">
                 <input type="text" class="form-control" id="searchInput" placeholder="Search for a program...">
             </div>
-            <!-- <div class="col-md-2 text-end">
-                <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#filterModal">
-                    <i class="bi bi-funnel"></i> Filter
-                </button>
-            </div> -->
+            <div class="col-md-2 text-end">
+                <div class="dropdown">
+                    <button class="btn btn-primary w-100 dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                        <i class="bi bi-funnel"></i> Filter
+                    </button>
+
+                    <div class="dropdown-menu dropdown-menu-end p-3" style="min-width: 220px;">
+                        <!-- Filter By University -->
+                        <h6 class="dropdown-header px-0">University</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="UNIMAS" id="unimas" name="university">
+                            <label class="form-check-label" for="unimas">
+                                UNIMAS
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="UMS" id="ums" name="university">
+                            <label class="form-check-label" for="ums">
+                                UMS
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="UM" id="um" name="university">
+                            <label class="form-check-label" for="um">
+                                UM
+                            </label>
+                        </div>
+
+                        <hr class="my-2">
+
+                        <!-- Filter By Location -->
+                        <h6 class="dropdown-header px-0">Location</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Sabah" id="sabah" name="location">
+                            <label class="form-check-label" for="sabah">
+                                Sabah
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Sarawak" id="sarawak" name="location">
+                            <label class="form-check-label" for="sarawak">
+                                Sarawak
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Kuala Lumpur" id="kualaLumpur" name="location">
+                            <label class="form-check-label" for="kualaLumpur">
+                                Kuala Lumpur
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="row">
-        {% for program in programs %}
-            <a href="{% url 'view_program' program.id %}" style="text-decoration: none; color: inherit;">
-                <div class="col-md-12 p-2 program-card">
-                    <div class="card shadow-sm">
+    <div class="row" id="program-list-container">
+    </div>
+
+    <!-- Hidden template to generate URLs correctly in JavaScript -->
+    <div id="program-url-template" data-url="{% url 'view_program' 9999 %}" style="display: none;"></div>
+</div>
+
+{{ programs|json_script:"programs" }}
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById("searchInput");
+    const filterCheckboxes = document.querySelectorAll(".dropdown-menu .form-check-input");
+    const programContainer = document.getElementById("program-list-container");
+    const urlTemplate = document.getElementById('program-url-template').dataset.url;
+
+    const programDataElement = document.getElementById('programs');
+    const allPrograms = JSON.parse(programDataElement.textContent);
+    programDataElement.remove();
+
+    function renderPrograms(programsToRender) {
+        // Renders the provided list of programs into the DOM. This is a temporary client-side solution.
+        programContainer.innerHTML = '';
+
+        if (programsToRender.length === 0) {
+            programContainer.innerHTML = '<div class="col-md-12"><p>No programs match your criteria.</p></div>';
+            return;
+        }
+
+        programsToRender.forEach(program => {
+            const programUrl = urlTemplate.replace('9999', program.id);
+
+            const cardHTML = `
+                <a href="${programUrl}" style="text-decoration: none; color: inherit;" class="col-md-12 p-2">
+                    <div class="card shadow-sm program-card">
                         <div class="card-body">
                             <div class="row g-3 align-items-center">
-                                <!-- Logo Column -->
                                 <div class="col-auto">
-                                    <img src="{{ program.logo }}" 
-                                        alt="{{ program.university.name }} logo"
-                                        class="img-fluid rounded"
-                                        style="width: 80px; height: 80px; object-fit: cover;">
+                                    <img src="${program.logo}" alt="${program.university} logo" class="img-fluid rounded" style="width: 80px; height: 80px; object-fit: cover;">
                                 </div>
-        
-                                <!-- Content Column -->
                                 <div class="col">
-                                    <p class="program-name text-primary fw-bold m-0 text-clamp-2">{{ program.name }}</p>
-                                    <p class="program-uni text-dark fw-bold mb-2">{{ program.university }}</p>
-                                    <p class="program-desc text-muted text-clamp-2">{{ program.description }}</p>
+                                    <p class="program-name text-primary fw-bold m-0 text-clamp-2">${program.name}</p>
+                                    <p class="program-uni text-dark fw-bold mb-2">${program.university}</p>
+                                    <p class="program-desc text-muted text-clamp-2">${program.description}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </a>
-        {% empty %}
-            <div class="col-md-12">
-                <p>No programs available.</p>
-            </div>
-        {% endfor %}    
-    </div>
-</div>
-
-<!-- Simple Search Script -->
-<script>
-    document.getElementById("searchInput").addEventListener("keyup", function () {
-        let filter = this.value.toLowerCase();
-        let cards = document.querySelectorAll(".program-card");
-
-        cards.forEach(card => {
-            let programName = card.querySelector(".program-name").textContent.toLowerCase();
-            let universityName = card.querySelector(".program-uni").textContent.toLowerCase();
-
-            if (programName.includes(filter) || universityName.includes(filter)) {
-                card.style.display = "";
-            } else {
-                card.style.display = "none";
-            }
+                </a>
+            `;
+            programContainer.innerHTML += cardHTML;
         });
-    });
+    }
+
+    function applyFilters() {
+        // Filters the master program list based on active search and checkbox criteria.
+        // This is a temporary client-side and hard-coded solution.
+        
+        const searchText = searchInput.value.toLowerCase();
+        const selectedUniversities = Array.from(document.querySelectorAll('input[name="university"]:checked')).map(cb => cb.value);
+        const selectedLocations = Array.from(document.querySelectorAll('input[name="location"]:checked')).map(cb => cb.value);
+
+        const filteredPrograms = allPrograms.filter(program => {
+            const universityStringLower = program.university.toLowerCase();
+
+            const matchesSearch = 
+                program.name.toLowerCase().includes(searchText) || 
+                universityStringLower.includes(searchText) || 
+                program.description.toLowerCase().includes(searchText);
+
+            const matchesUniversity = selectedUniversities.length === 0 || selectedUniversities.some(uni => {
+                if (uni === 'UM') {
+                    return universityStringLower.includes('malaya');
+                }
+                return universityStringLower.includes(uni.toLowerCase());
+            });
+
+            const matchesLocation = selectedLocations.length === 0 || selectedLocations.some(loc => {
+                if (loc === 'Kuala Lumpur') {
+                    return universityStringLower.includes('malaya');
+                }
+                return universityStringLower.includes(loc.toLowerCase());
+            });
+
+            return matchesSearch && matchesUniversity && matchesLocation;
+        });
+
+        renderPrograms(filteredPrograms);
+    }
+
+    searchInput.addEventListener("keyup", applyFilters);
+    filterCheckboxes.forEach(checkbox => checkbox.addEventListener("change", applyFilters));
+    renderPrograms(allPrograms);
+});
 </script>
 
 {% endblock %}
