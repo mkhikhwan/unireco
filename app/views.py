@@ -60,8 +60,8 @@ def user_signup(request):
 
         if form.is_valid():
             user = form.save()
-            login(request, user)  # Automatically log in after signup
-            return redirect("/")  # Change "home" to your homepage URL name
+            # login(request, user)  # Automatically log in after signup
+            return redirect("/login")  # Change "home" to your homepage URL name
     else:
         print("Failed to create user")
         form = CustomUserCreationForm()
@@ -242,6 +242,7 @@ def qualification_selection(request):
 @login_required(login_url='/login')
 def diploma_form(request):
     institutions = [
+        "Politeknik Kota Kinabalu",
         "Politeknik Kuching",
         "Universiti Institut Teknologi Mara (UiTM)",
     ]
@@ -249,12 +250,23 @@ def diploma_form(request):
     diploma_names = [
         "Diploma in Computer Science",
         "Diploma in Information Technology",
+        "Diploma in Mechanical Engineering",
+        "Diploma in Electrical Engineering",
     ]
 
-    nec_categories = {
+    nec_categories= {
+        "00": "00: Generic programmes and qualifications",
+        "01": "01: Education",
+        "02": "02: Arts and humanities",
+        "03": "03: Social sciences, journalism and information",
+        "04": "04: Business, administration and law",
         "05": "05: Natural sciences, mathematics and statistics",
         "06": "06: Information and communication technologies",
-        "07": "07: Engineering, manufacturing and construction"
+        "07": "07: Engineering, manufacturing and construction",
+        "08": "08: Agriculture, forestry, fisheries and veterinary",
+        "09": "09: Health and welfare",
+        "10": "10: Services",
+        "99": "99: Field unknown"
     }
 
     context = {
