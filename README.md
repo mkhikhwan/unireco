@@ -15,7 +15,7 @@ UniReco is a web-based recommendation system developed as part of a final-year B
 - **Deployment**: VPS (Linux server)
 
 ## Disclaimer
-This project is for academic purposes only. No personal or sensitive user data is collected or stored. All sample data used in development are publicly available.
+This project is for academic purposes only. No personal or sensitive user data is collected or stored. Data is not provided in this repository.
 
 ---
 
